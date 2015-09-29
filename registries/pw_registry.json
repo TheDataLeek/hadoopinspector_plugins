@@ -1,0 +1,127 @@
+{ "had-data-001": {
+    "rumprod": {
+        "dim_comm_date": {
+            "rule_demo": {
+                "check_type": "rule",
+                "check_name": "rule_table_demo.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" },
+            "rule_pk_dateid": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "date_id" },
+            "rule_table_stats_exist": {
+                "check_type": "rule",
+                "check_name": "rule_table_stats_exist.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" }   },
+        "dim_comm_score": {
+            "rule_pk_scoreid": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "score_id" },
+            "rule_uk_scorename": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "score_name" },
+            "rule_table_stats_exist": {
+                "check_type": "rule",
+                "check_name": "rule_table_stats_exist.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" }   },
+         "dim_comm_score_rel": {
+            "rule_pk_score1_score2_type": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "score1_id, score2_id, rel_type"  },    
+            "rule_fk_score1": {
+                "check_type": "rule",
+                "check_name": "rule_table_fk.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_child_col": "score1_id", 
+                "hapinsp_checkcustom_parent_table": "dim_comm_score",
+                "hapinsp_checkcustom_parent_col": "score_id"  },
+            "rule_fk_score2": {
+                "check_type": "rule",
+                "check_name": "rule_table_fk.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_child_col": "score2_id", 
+                "hapinsp_checkcustom_parent_table": "dim_comm_score",
+                "hapinsp_checkcustom_parent_col": "score_id"  },
+            "rule_ck_reltype": {
+                "check_type": "rule",
+                "check_name": "rule_dim_comm_score_rel_ck_reltype.bash",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active"  },
+            "rule_table_stats_exist": {
+                "check_type": "rule",
+                "check_name": "rule_table_stats_exist.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" }   },
+          "dim_comm_sensor": {
+            "rule_pk_sensor_id": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "sensor_id" },
+            "rule_table_stats_exist": {
+                "check_type": "rule",
+                "check_name": "rule_table_stats_exist.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" }   },
+          "facts_sensor_score_day": {
+            "setup_table_nonpart_by_yearmonthday": {
+                "check_type": "setup",
+                "check_name": "setup_table_nonpart_by_yearmonthday.py",
+                "check_mode": "incremental",
+                "check_scope": "",
+                "check_status": "active" },
+            "rule_fk_sensorid": {
+                "check_type": "rule",
+                "check_name": "rule_table_part_fk.py",
+                "check_mode": "incremental",
+                "check_scope": "row",
+                "check_status": "active",
+                "hapinsp_checkcustom_child_col":    "sensor_id", 
+                "hapinsp_checkcustom_parent_table": "dim_comm_sensor",
+                "hapinsp_checkcustom_parent_col":   "sensor_id"  },
+            "rule_pk_sen_date_score": {
+                "check_type": "rule",
+                "check_name": "rule_table_uniqueness.py",
+                "check_mode": "full",
+                "check_scope": "incremental",
+                "check_status": "active",
+                "hapinsp_checkcustom_cols": "sensor_id, date_id, score_id" },
+            "rule_table_stats_exist": {
+                "check_type": "rule",
+                "check_name": "rule_table_stats_exist.py",
+                "check_mode": "full",
+                "check_scope": "row",
+                "check_status": "active" }   }
+   }
+}
+}
