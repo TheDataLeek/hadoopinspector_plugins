@@ -105,40 +105,10 @@ def get_first_dt(inst, db, table):
                 break
         return val
 
-    #sql =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' 2>/dev/null | head -n 1 """.format(tab=table)
-    sql =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' | head -n 10 """.format(tab=table)
-    print('----------------')
-    print(sql)
-    print('----------------')
+    cmd =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' | head -n 1 """.format(tab=table)
+    stdout = subprocess.check_output(cmd, shell=True)[:-1] # remove ending newline
 
-    #cmd1 = ['impala-shell', '-i', 'had-data-001', '-d', 'rumprod',
-    #        '--quiet', '--output_delimiter', ',', '-B',
-    #       '-q', "show partitions fact_dns_v2"]
-    #cmd2 = ['head', '-n', '1']
-    #ps = subprocess.Popen(cmd1, stdout=subprocess.PIPE)
-    #stdout = subprocess.check_output(cmd2, stdin=ps.stdout)
-
-    stdout = subprocess.check_output(sql, shell=True)[:-1] # remove ending newline
-
-    #print("====================")
-    #p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #p2 = subprocess.Popen(cmd2, stdin=p1.stdout)
-    #stdout, stderr = p2.communicate()
-    #print("stdout: ")
-    #pp(stdout)
-    #print("stderr: ")
-    #pp(stderr)
-    #print("done")
-    #print("====================")
-
-    #if p2.returncode != 0:
-    #    print("First_dt failed1")
-    #    raise ValueError
-
-    print("stdout: ")
-    print(stdout)
     fields = stdout.split(',')
-    print(fields)
     assert len(fields) == 10, "Invalid fields: %s" % ','.join(fields)
     first_dt = datetime.datetime(int(fields[0]), int(fields[1]), int(fields[2]))
     return first_dt

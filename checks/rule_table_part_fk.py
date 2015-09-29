@@ -98,8 +98,8 @@ def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, mo
                     FROM {c_tab}                     \
                         LEFT OUTER JOIN {p_tab}      \
                            ON {c_tabcol} = {p_tabcol}\
-                           {p_filter}                \
                     WHERE {p_tabcol} IS NULL         \
+                           {p_filter}                \
                 )                                    \
                 SELECT COALESCE(COUNT(*), 0)         \
                 FROM t1                              \
