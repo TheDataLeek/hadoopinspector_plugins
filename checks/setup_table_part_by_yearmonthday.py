@@ -5,9 +5,7 @@ in the source code root directory for the full language or refer to it here:
    http://opensource.org/licenses/BSD-3-Clause
 Copyright 2015 Will Farmer and Ken Farmer
 """
-import os, sys, time
-import datetime
-import argparse
+import os, sys, time, datetime, argparse
 from os.path import dirname
 from pprint import pprint as pp
 import envoy
@@ -105,7 +103,7 @@ def get_first_dt(inst, db, table):
                 break
         return val
 
-    cmd =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' | head -n 1 """.format(tab=table)
+    cmd =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' 2>/dev/null | head -n 1 """.format(tab=table)
     stdout = subprocess.check_output(cmd, shell=True)[:-1] # remove ending newline
 
     fields = stdout.split(',')
