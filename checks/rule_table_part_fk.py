@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-"""
-This source code is protected by the BSD license.  See the file "LICENSE"
-in the source code root directory for the full language or refer to it here:
-   http://opensource.org/licenses/BSD-3-Clause
-Copyright 2015 Will Farmer and Ken Farmer
-"""
 import os, sys, time
 import argparse
 from os.path import dirname
@@ -30,6 +24,10 @@ def main():
         results['violation_cnt'] = r.std_out.strip()
         results['mode'] = mode
 
+    results['log'] = 'year={} month={} day={}'.format(args.year, args.month, args.day)
+    results['hapinsp_tablecustom_year'] = args.year
+    results['hapinsp_tablecustom_month'] = args.month
+    results['hapinsp_tablecustom_day'] = args.day
     results['rc'] = r.status_code
     print(hapinsp_formatter.transform_args(results))
 
@@ -99,7 +97,7 @@ def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, mo
                         LEFT OUTER JOIN {p_tab}      \
                            ON {c_tabcol} = {p_tabcol}\
                     WHERE {p_tabcol} IS NULL         \
-                           {p_filter}                \
+                          {p_filter}                 \
                 )                                    \
                 SELECT COALESCE(COUNT(*), 0)         \
                 FROM t1                              \
@@ -107,7 +105,7 @@ def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, mo
                        p_tab=parent_table, p_col=parent_col, p_filter=part_filter)
 
     smaller_sql = despacer(sql)
-    cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s"
+    cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s"
           """ % (inst, db, smaller_sql)
     mode = 'incremental' if day else 'full'
     return cmd, mode
