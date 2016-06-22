@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-"""
-This source code is protected by the BSD license.  See the file "LICENSE"
-in the source code root directory for the full language or refer to it here:
-   http://opensource.org/licenses/BSD-3-Clause
-Copyright 2015 Will Farmer and Ken Farmer
-"""
 import os, sys, time
 import argparse
 from os.path import dirname
@@ -91,7 +85,7 @@ def get_cmd(inst, db, child_table, child_col, parent_table, parent_col):
             """.format(c_tabcol=child_tabcol, p_tabcol=parent_tabcol, c_tab=child_table, p_tab=parent_table, p_col=parent_col)
 
     smaller_sql = despacer(sql)
-    cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s"
+    cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s"
           """ % (inst, db, smaller_sql)
     return cmd
 

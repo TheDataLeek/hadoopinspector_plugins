@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-"""
-This source code is protected by the BSD license.  See the file "LICENSE"
-in the source code root directory for the full language or refer to it here:
-   http://opensource.org/licenses/BSD-3-Clause
-Copyright 2015 Will Farmer and Ken Farmer
-"""
 import os, sys, time
 import argparse
 from os.path import dirname
@@ -17,7 +11,7 @@ import hapinsp_formatter
 
 def main():
     args = get_args()
-    cmd  = get_cmd(args.inst, args.db, args.table, args.cols)
+    cmd  = get_cmd(args.inst, args.db, args.table, args.cols, args.ssl)
 
     r = envoy.run(cmd)
     results = {}
@@ -38,12 +32,15 @@ def get_args():
     parser.add_argument("--db")
     parser.add_argument("--table")
     parser.add_argument("--cols")
+    parser.add_argument("--ssl", action='store_true')
+    parser.add_argument("--no-ssl", action='store_false', dest='ssl')
     args = parser.parse_args()
 
-    args.inst  = args.inst or os.environ.get('hapinsp_instance', None)
-    args.db    = args.db or os.environ.get('hapinsp_database', None)
+    args.inst  = args.inst  or os.environ.get('hapinsp_instance', None)
+    args.db    = args.db    or os.environ.get('hapinsp_database', None)
     args.table = args.table or os.environ.get('hapinsp_table', None)
-    args.cols  = args.cols or os.environ.get('hapinsp_checkcustom_cols', None)
+    args.cols  = args.cols  or os.environ.get('hapinsp_checkcustom_cols', None)
+    args.ssl   = args.ssl   or os.environ.get('hapinsp_ssl', None)
     if not args.inst:
         abort("Error: instance not provided as arg or env var")
     if not args.db:
@@ -52,11 +49,13 @@ def get_args():
         abort("Error: table not provided as arg or env var")
     if not args.cols:
         abort("Error: cols not provided as arg or env var")
+    if not args.ssl:
+        abort("Error: ssl not provided as arg or env var")
 
     return args
 
 
-def get_cmd(inst, db, table, cols):
+def get_cmd(inst, db, table, cols, ssl):
     def despacer(val):
         while True:
             old_val = val
@@ -77,8 +76,9 @@ def get_cmd(inst, db, table, cols):
                 WHERE dup_cnt > 1                    \
             """ % (cols, table, cols)
     smaller_sql = despacer(sql)
-    cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s"
-          """ % (inst, db, smaller_sql)
+    sslopt = '--ssl' if ssl else ''
+    cmd = """ impala-shell -i %s -d %s --quiet -B %s -q "%s"
+          """ % (inst, db, sslopt, smaller_sql)
     return cmd
 
 

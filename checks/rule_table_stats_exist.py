@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-"""
-This source code is protected by the BSD license.  See the file "LICENSE"
-in the source code root directory for the full language or refer to it here:
-   http://opensource.org/licenses/BSD-3-Clause
-Copyright 2015 Will Farmer and Ken Farmer
-"""
 import os, sys, time
 import argparse
 from os.path import dirname
@@ -44,7 +38,7 @@ def main():
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="tests dimension's pk")
+    parser = argparse.ArgumentParser(description="tests table statistics")
     parser.add_argument("--inst")
     parser.add_argument("--db")
     parser.add_argument("--table")
@@ -74,7 +68,7 @@ def get_cmd(inst, db, table):
     sql =   """ SHOW TABLE STATS {tab}   \
             """.format(tab=table)
     smaller_sql = despacer(sql)
-    cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s" | columns | cut -f 1
+    cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s" | columns | cut -f 1
           """ % (inst, db, smaller_sql)
     return cmd
 
