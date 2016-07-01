@@ -5,7 +5,7 @@ in the source code root directory for the full language or refer to it here:
    http://opensource.org/licenses/BSD-3-Clause
 Copyright 2015 Will Farmer and Ken Farmer
 """
-import os, sys, time, datetime, argparse
+import os, sys, datetime, argparse
 from os.path import dirname
 from pprint import pprint as pp
 import envoy
@@ -64,26 +64,17 @@ def dt_to_parts(dt):
         return dt.year, dt.month, dt.day
 
 def does_part_have_data(inst, db, table, year, month, day):
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
 
     sql =   """ SELECT 'found-data'
                 FROM {tab}
                 WHERE year={year} AND month={month} AND day={day}
                 LIMIT 1
             """.format(tab=table, year=year, month=month, day=day)
-    smaller_sql = despacer(sql)
+    sql = ' '.join(sql.split())
     cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s" | columns | cut -f 1
-          """ % (inst, db, smaller_sql)
+          """ % (inst, db, sql)
 
     r = envoy.run(cmd)
-    results = {}
-    internal_status_code = -1
     if r.status_code != 0:
         print(cmd)
         print(r.std_err)
@@ -95,15 +86,10 @@ def does_part_have_data(inst, db, table, year, month, day):
 
 
 def get_first_dt(inst, db, table):
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
 
-    cmd =   """ impala-shell -i had-data-001 -d rumprod --quiet --output_delimiter ',' -B -q 'show partitions {tab}' 2>/dev/null | head -n 1 """.format(tab=table)
+    cmd =   """ impala-shell -i {inst} -d {db} --quiet --output_delimiter ',' -B
+                -q 'show partitions {tab}' 2>/dev/null | head -n 1
+            """.format(inst=inst, db=db, tab=table)
     stdout = subprocess.check_output(cmd, shell=True)[:-1] # remove ending newline
 
     fields = stdout.split(',')
@@ -154,4 +140,4 @@ def isnumeric(val):
         return True
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())

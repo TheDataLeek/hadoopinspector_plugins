@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys, time
+import os, sys
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -57,19 +57,12 @@ def get_args():
 
 
 def get_cmd(inst, db, table):
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
 
-    sql =   """ SHOW TABLE STATS {tab}   \
-            """.format(tab=table)
-    smaller_sql = despacer(sql)
+    sql = """ SHOW TABLE STATS {tab}   \
+          """.format(tab=table)
+    sql = ' '.join(sql.split())
     cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s" | columns | cut -f 1
-          """ % (inst, db, smaller_sql)
+          """ % (inst, db, sql)
     return cmd
 
 
@@ -88,4 +81,4 @@ def isnumeric(val):
         return True
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())

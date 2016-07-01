@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys, time
+import os, sys
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -58,23 +58,15 @@ def get_args():
 
 def get_cmd(inst, db, table, col, enums):
 
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
-
     enums_string = ','.join(enums)
     sql =   """ SELECT COUNT(*) \
                   FROM {tab} \
                  WHERE {col} NOT IN ({enums})    \
             """.format(tab=table, col=col, enums=enums_string)
 
-    smaller_sql = despacer(sql)
+    sql = ' '.join(sql.split())
     cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s"
-          """ % (inst, db, smaller_sql)
+          """ % (inst, db, sql)
     return cmd
 
 
@@ -84,4 +76,4 @@ def abort(msg):
 
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())

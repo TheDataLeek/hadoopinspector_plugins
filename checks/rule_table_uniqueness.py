@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys, time
+import os, sys
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -27,7 +27,7 @@ def main():
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="tests dimension's pk")
+    parser = argparse.ArgumentParser(description="tests table's pk")
     parser.add_argument("--inst")
     parser.add_argument("--db")
     parser.add_argument("--table")
@@ -56,13 +56,6 @@ def get_args():
 
 
 def get_cmd(inst, db, table, cols, ssl):
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
 
     sql =   """ WITH t1 AS (                         \
                     SELECT  %s    ,                  \
@@ -75,10 +68,10 @@ def get_cmd(inst, db, table, cols, ssl):
                 FROM t1                              \
                 WHERE dup_cnt > 1                    \
             """ % (cols, table, cols)
-    smaller_sql = despacer(sql)
+    sql = ' '.join(sql.split())
     sslopt = '--ssl' if ssl else ''
     cmd = """ impala-shell -i %s -d %s --quiet -B %s -q "%s"
-          """ % (inst, db, sslopt, smaller_sql)
+          """ % (inst, db, sslopt, sql)
     return cmd
 
 
@@ -88,4 +81,4 @@ def abort(msg):
 
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())
