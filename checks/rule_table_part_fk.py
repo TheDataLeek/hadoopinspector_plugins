@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys, time
+import os, sys
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -33,7 +33,7 @@ def main():
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="tests dimension's foreign key")
+    parser = argparse.ArgumentParser(description="tests table's foreign key")
     parser.add_argument("--inst")
     parser.add_argument("--db")
     parser.add_argument("--child-table")
@@ -75,14 +75,6 @@ def get_args():
 
 def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, month, day):
 
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
-
     child_tabcol  = '%s.%s' % (child_table, child_col)
     parent_tabcol = '%s.%s' % (parent_table, parent_col)
     if day:
@@ -104,9 +96,9 @@ def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, mo
             """.format(c_tabcol=child_tabcol, p_tabcol=parent_tabcol, c_tab=child_table,
                        p_tab=parent_table, p_col=parent_col, p_filter=part_filter)
 
-    smaller_sql = despacer(sql)
+    sql = ' '.join(sql.split())
     cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s"
-          """ % (inst, db, smaller_sql)
+          """ % (inst, db, sql)
     mode = 'incremental' if day else 'full'
     return cmd, mode
 
@@ -117,4 +109,4 @@ def abort(msg):
 
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys, time
+import os, sys
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -53,25 +53,14 @@ def get_args():
 
 def get_cmd(inst, db, table, timestamp_col):
 
-    def despacer(val):
-        while True:
-            old_val = val
-            val     = val.replace('  ', ' ')
-            if val == old_val:
-                break
-        return val
-
-    day_tabcol = '%s.%s' % (table, 'day')
-    ts_tabcol  = '%s.%s' % (table, timestamp_col)
-
     sql =   """ SELECT COUNT(*) \
                   FROM {tab} \
                  WHERE {day_col} <> DAY({ts_col})    \
             """.format(tab=table, day_col='day', ts_col=timestamp_col)
 
-    smaller_sql = despacer(sql)
+    sql = ' '.join(sql.split())
     cmd = """ impala-shell -i %s -d %s --quiet -B -q "%s"
-          """ % (inst, db, smaller_sql)
+          """ % (inst, db, sql)
     return cmd
 
 
@@ -81,4 +70,4 @@ def abort(msg):
 
 
 if __name__ == '__main__':
-   sys.exit(main())
+    sys.exit(main())
