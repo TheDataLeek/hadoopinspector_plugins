@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys
+import os, sys, time
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -8,12 +8,13 @@ import envoy
 sys.path.insert(0, dirname(dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dirname(os.path.abspath(__file__)))
 import hapinsp_formatter
+import check_tools as tools
 
 def main():
     args = get_args()
+    validate_args(args)
     cmd, mode  = get_cmd(args.inst, args.db, args.child_table, args.child_col, args.parent_table, args.parent_col,
-                   args.year, args.month, args.day)
-
+                         args.start_ts, args.stop_ts, args.ssl)
     r = envoy.run(cmd)
     results = {}
     if r.status_code != 0:
@@ -24,10 +25,7 @@ def main():
         results['violation_cnt'] = r.std_out.strip()
         results['mode'] = mode
 
-    results['log'] = 'year={} month={} day={}'.format(args.year, args.month, args.day)
-    results['hapinsp_tablecustom_year'] = args.year
-    results['hapinsp_tablecustom_month'] = args.month
-    results['hapinsp_tablecustom_day'] = args.day
+    results['log'] = 'start_ts={}, stop_ts={}'.format(args.start_ts, args.stop_ts)
     results['rc'] = r.status_code
     print(hapinsp_formatter.transform_args(results))
 
@@ -36,26 +34,31 @@ def get_args():
     parser = argparse.ArgumentParser(description="tests table's foreign key")
     parser.add_argument("--inst")
     parser.add_argument("--db")
+    parser.add_argument("--ssl")
     parser.add_argument("--child-table")
     parser.add_argument("--child-col")
     parser.add_argument("--parent-table")
     parser.add_argument("--parent-col")
-    parser.add_argument("--year")
-    parser.add_argument("--month")
-    parser.add_argument("--day")
+    parser.add_argument("--start-ts")
+    parser.add_argument("--stop-ts")
     args = parser.parse_args()
 
     args.inst         = args.inst         or os.environ.get('hapinsp_instance', None)
     args.db           = args.db           or os.environ.get('hapinsp_database', None)
+    args.ssl          = args.ssl          or os.environ.get('hapinsp_ssl', None)
     args.child_table  = args.child_table  or os.environ.get('hapinsp_table', None)
     args.child_col    = args.child_col    or os.environ.get('hapinsp_checkcustom_child_col', None)
     args.parent_table = args.parent_table or os.environ.get('hapinsp_checkcustom_parent_table', None)
     args.parent_col   = args.parent_col   or os.environ.get('hapinsp_checkcustom_parent_col', None)
-    args.year         = args.year         or os.environ.get('hapinsp_tablecustom_year', None)
-    args.month        = args.month        or os.environ.get('hapinsp_tablecustom_month', None)
-    args.day          = args.day          or os.environ.get('hapinsp_tablecustom_day', None)
+    args.start_ts     = args.start_ts     or os.environ.get('hapinsp_table_data_start_ts', None)
+    args.stop_ts      = args.stop_ts      or os.environ.get('hapinsp_table_data_stop_ts', None)
     args.table_mode   = os.environ.get('hapinsp_table_mode', None)
     args.check_mode   = os.environ.get('hapinsp_check_mode', None)
+
+    return args
+
+
+def validate_args(args):
 
     if not args.inst:
         abort("Error: instance not provided as arg or env var")
@@ -69,37 +72,39 @@ def get_args():
         abort("Error: parent_table not provided as arg or env var")
     if not args.parent_col:
         abort("Error: parent_col not provided as arg or env var")
+    if args.start_ts and not tools.valid_iso8601(args.start_ts, 'basic'):
+        abort("Error: start_ts is invalid: %s" % args.start_ts)
+    if args.stop_ts and not tools.valid_iso8601(args.stop_ts, 'basic'):
+        abort("Error: stop_ts is invalid: %s" % args.stop_ts)
 
-    return args
 
 
-def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, year, month, day):
+def get_cmd(inst, db, child_table, child_col, parent_table, parent_col, start_ts, stop_ts, ssl):
 
-    child_tabcol  = '%s.%s' % (child_table, child_col)
-    parent_tabcol = '%s.%s' % (parent_table, parent_col)
-    if day:
-        part_filter = 'AND year={} AND month={} and day={}'.format(year, month, day)
+    if start_ts is None or stop_ts is None:
+        filter = ''
     else:
-        part_filter = ''
+        filter = tools.get_ymd_filter(start_ts, stop_ts)
 
     sql =   """ WITH t1 AS (                         \
-                    SELECT  {c_tabcol} AS child_col, \
-                            {p_tabcol} AS par_col    \
-                    FROM {c_tab}                     \
-                        LEFT OUTER JOIN {p_tab}      \
-                           ON {c_tabcol} = {p_tabcol}\
-                    WHERE {p_tabcol} IS NULL         \
-                          {p_filter}                 \
+                    SELECT  c.{c_col} AS child_col,  \
+                            p.{p_col} AS par_col     \
+                    FROM {c_tab} c                   \
+                        LEFT OUTER JOIN {p_tab} p    \
+                           ON c.{c_col} = p.{p_col}  \
+                    WHERE p.{p_col} IS NULL          \
+                          {filter}                   \
                 )                                    \
                 SELECT COALESCE(COUNT(*), 0)         \
                 FROM t1                              \
-            """.format(c_tabcol=child_tabcol, p_tabcol=parent_tabcol, c_tab=child_table,
-                       p_tab=parent_table, p_col=parent_col, p_filter=part_filter)
+            """.format(c_col=child_col, p_col=parent_col, c_tab=child_table,
+                       p_tab=parent_table, filter=filter)
 
     sql = ' '.join(sql.split())
-    cmd = """ impala-shell -i %s -d %s --quiet -B --ssl -q "%s"
-          """ % (inst, db, sql)
-    mode = 'incremental' if day else 'full'
+    ssl_opt = tools.format_ssl(ssl)
+    cmd = """ impala-shell -i {inst} -d {db} --quiet -B {ssl} -q "{sql}"
+          """.format(inst=inst, db=db, ssl=ssl_opt, sql=sql)
+    mode = 'incremental' if filter else 'full'
     return cmd, mode
 
 
