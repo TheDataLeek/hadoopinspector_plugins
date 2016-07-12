@@ -1,0 +1,74 @@
+{"facts_netflow_sen_dir_proto_hour_v": {
+    "setup_table_nonpart": {
+	"check_type": "setup",
+	"check_name": "setup_table_nonpart.py",
+	"check_mode": "incremental" },
+    "rule_fk_sensorid": {
+	"check_name": "rule_table_part_fk.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_child_col":    "sensor_id", 
+	"hapinsp_checkcustom_parent_table": "dim_comm_sensor",
+	"hapinsp_checkcustom_parent_col":   "sensor_id"  },
+    "rule_fk_directionid": {
+	"check_name": "rule_table_part_fk.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_child_col":    "direction_id", 
+	"hapinsp_checkcustom_parent_table": "dim_comm_direction",
+	"hapinsp_checkcustom_parent_col":   "direction_id"  },
+    "rule_ck_state": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "state", 
+	"hapinsp_checkcustom_enums":        " 'new', 'open', 'closed' " },
+    "rule_ck_source_net_type_cd": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "source_net_type_cd", 
+	"hapinsp_checkcustom_enums":        " 'int', 'ext', 'unk' " },
+    "rule_ck_dest_net_type_cd": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "dest_net_type_cd", 
+	"hapinsp_checkcustom_enums":        " 'int', 'ext', 'unk' " },
+    "rule_table_stats_exist": {
+	"check_name": "rule_table_stats_exist.py",
+	"check_mode": "full",
+	"check_scope": "table" }   },
+
+"facts_netflow_sen_dir_proto_ippair_day_v": {
+    "setup_table_nonpart": {
+	"check_type": "setup",
+	"check_name": "setup_table_nonpart.py",
+	"check_mode": "incremental" },
+    "rule_fk_sensorid": {
+	"check_name": "rule_table_part_fk.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_child_col":    "sensor_id", 
+	"hapinsp_checkcustom_parent_table": "dim_comm_sensor",
+	"hapinsp_checkcustom_parent_col":   "sensor_id"  },
+    "rule_fk_directionid": {
+	"check_name": "rule_table_part_fk.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_child_col":    "direction_id", 
+	"hapinsp_checkcustom_parent_table": "dim_comm_direction",
+	"hapinsp_checkcustom_parent_col":   "direction_id"  },
+    "rule_ck_state": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "state", 
+	"hapinsp_checkcustom_enums":        " 'new', 'open', 'closed' " },
+    "rule_ck_source_net_type_cd": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "source_net_type_cd", 
+	"hapinsp_checkcustom_enums":        " 'int', 'ext', 'unk' " },
+    "rule_ck_dest_net_type_cd": {
+	"check_name": "rule_table_enum.py",
+	"check_mode": "incremental",
+	"hapinsp_checkcustom_col":          "dest_net_type_cd", 
+	"hapinsp_checkcustom_enums":        " 'int', 'ext', 'unk' " },
+    "rule_table_stats_exist": {
+	"check_name": "rule_table_stats_exist.py",
+	"check_mode": "full",
+	"check_scope": "table" }   }
+}
