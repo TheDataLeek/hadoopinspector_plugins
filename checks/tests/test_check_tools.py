@@ -7,6 +7,7 @@ sys.path.insert(0, '../')
 import pytest
 import check_tools as mod
 
+
 class Test_valid_iso8601_basic(object):
 
     def test_valid_short(self):
@@ -24,6 +25,7 @@ class Test_valid_iso8601_basic(object):
     def test_invalid_misc(self):
         assert mod.valid_iso8601('20160102 030405', 'basic') is False
         assert mod.valid_iso8601(None, 'basic') is False
+
 
 class Test_valid_iso8601_ext(object):
 
@@ -43,6 +45,7 @@ class Test_valid_iso8601_ext(object):
         assert mod.valid_iso8601('20160102T030405', 'ext') is False
         assert mod.valid_iso8601(None, 'ext') is False
 
+
 class Test_get_next_dt(object):
     def test_basics(self):
         last_start_dt = datetime.datetime(2015, 01, 02, 0, 0, 0)
@@ -52,6 +55,7 @@ class Test_get_next_dt(object):
     def test_input_is_none(self):
         last_dt = None
         assert mod.get_next_dt(None, None)  == (None, None)
+
 
 class Test_iso8601_to_dt_basic(object):
 
@@ -76,6 +80,7 @@ class Test_iso8601_to_dt_basic(object):
         with pytest.raises(ValueError):
             mod.iso8601_to_dt('20160102 030405', 'basic')
 
+
 class Test_iso8601_to_ext(object):
 
     def test_valid_short(self):
@@ -98,6 +103,7 @@ class Test_iso8601_to_ext(object):
     def test_invalid_misc(self):
         with pytest.raises(ValueError):
             mod.iso8601_to_dt('20160102T030405', 'ext')
+
 
 class Test_dt_to_iso8601(object):
 

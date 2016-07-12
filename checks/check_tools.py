@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Identifies data start & stop times for tables that are not partitioned.
+""" Common functions usable by any checks
 
 """
 import os, sys, time
