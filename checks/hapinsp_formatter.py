@@ -10,6 +10,10 @@ def transform_args(args):
             results_dict[key] = args_dict[key]
         elif key == 'table_status':
             results_dict[key] = args_dict[key]
+        elif key == 'data_start_ts':
+            results_dict['data_start_ts'] = args_dict[key]
+        elif key == 'data_stop_ts':
+            results_dict['data_stop_ts'] = args_dict[key]
         elif key == 'violation_cnt':
             results_dict['violations'] = args_dict[key]
         elif key == 'mode':

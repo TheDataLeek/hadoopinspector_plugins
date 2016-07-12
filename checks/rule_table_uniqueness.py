@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, sys
+import os, sys, time
 import argparse
 from os.path import dirname
 from pprint import pprint as pp
@@ -8,6 +8,7 @@ import envoy
 sys.path.insert(0, dirname(dirname(os.path.abspath(__file__))))
 sys.path.insert(0, dirname(os.path.abspath(__file__)))
 import hapinsp_formatter
+import check_tools as tools
 
 def main():
     args = get_args()
@@ -27,7 +28,7 @@ def main():
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description="tests table's pk")
+    parser = argparse.ArgumentParser(description="tests dimension's pk")
     parser.add_argument("--inst")
     parser.add_argument("--db")
     parser.add_argument("--table")
@@ -56,7 +57,6 @@ def get_args():
 
 
 def get_cmd(inst, db, table, cols, ssl):
-
     sql =   """ WITH t1 AS (                         \
                     SELECT  %s    ,                  \
                             COUNT(*) AS dup_cnt      \
@@ -69,7 +69,7 @@ def get_cmd(inst, db, table, cols, ssl):
                 WHERE dup_cnt > 1                    \
             """ % (cols, table, cols)
     sql = ' '.join(sql.split())
-    sslopt = '--ssl' if ssl else ''
+    sslopt = tools.format_ssl(ssl)
     cmd = """ impala-shell -i %s -d %s --quiet -B %s -q "%s"
           """ % (inst, db, sslopt, sql)
     return cmd
@@ -81,4 +81,4 @@ def abort(msg):
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+   sys.exit(main())
