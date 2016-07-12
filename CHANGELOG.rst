@@ -1,3 +1,5 @@
+0.0.7 - Update sample registry to show removal of inst & db
+
 0.0.6 - Add support for data\_start\_ts & data\_stop\_ts
 
 0.0.5 - Add new checks
