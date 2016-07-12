@@ -12,6 +12,6 @@ else
     sslopt=''
 fi
 
-violations=` impala-shell -i ${hapinsp_instance} -d ${hapinsp_database} -B --ssl --quiet -q "$sql" 2>/dev/null`
+violations=` impala-shell -i ${hapinsp_instance} -d ${hapinsp_database} -B ${sslopt} --quiet -q "$sql" 2>/dev/null`
 
 echo {'"'violations'"':'"'$violations'"', '"'rc'"':'"'0'"'}

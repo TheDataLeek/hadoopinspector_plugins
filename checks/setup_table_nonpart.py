@@ -33,8 +33,11 @@ def main():
                 next_start_dt       = tools.dt_override(first_dt, hour=0, minute=0, second=0, ms=0)
                 next_stop_dt        = tools.dt_override(first_dt, hour=23, minute=59, second=59, ms=999999)
         else:
-            next_start_dt, next_stop_dt = tools.get_next_dt(tools.iso8601_to_dt(args.data_start_ts_prior),
-                                                            tools.iso8601_to_dt(args.data_stop_ts_prior))
+            try:
+                next_start_dt, next_stop_dt = tools.get_next_dt(tools.iso8601_to_dt(args.data_start_ts_prior),
+                                                                tools.iso8601_to_dt(args.data_stop_ts_prior))
+            except ValueError:
+                print('invalid data_start_ts_prior or data_stop_ts_prior: %s and %s' % (args.data_start_ts_prior, args.data_stop_ts_prior))
             next_period_has_data = does_period_have_data(args.inst, args.db, args.ssl, args.table, next_start_dt, next_stop_dt)
     else:
         next_period_has_data = does_period_have_data(args.inst, args.db, args.ssl, args.table, start_dt=None, stop_dt=None)
