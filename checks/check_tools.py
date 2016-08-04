@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Common functions usable by any checks
+""" Identifies data start & stop times for tables that are not partitioned.
 
 """
 import os, sys, time
@@ -164,7 +164,7 @@ def get_ymd_filter(start_iso8601, stop_iso8601):
     start_dt = iso8601_to_dt(start_iso8601, 'any')
     stop_dt  = iso8601_to_dt(stop_iso8601, 'any')
 
-    part_filter = 'AND ( (c.year > {y}) OR (c.year = {y} and c.month > {m}) OR (c.year = {y} AND c.month = {m} and c.day <= {d}) )'\
+    part_filter = 'AND ( (c.year > {y}) OR (c.year = {y} and c.month > {m}) OR (c.year = {y} AND c.month = {m} and c.day >= {d}) )'\
             .format(y=start_dt.year, m=start_dt.month, d=start_dt.day)
     part_filter += 'AND ( (c.year < {y}) OR (c.year = {y} and c.month < {m}) OR (c.year = {y} AND c.month = {m} and c.day <= {d}) )'\
             .format(y=stop_dt.year, m=stop_dt.month, d=stop_dt.day)
