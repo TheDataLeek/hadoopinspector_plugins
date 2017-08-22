@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Identifies data start & stop times for tables that are not partitioned.
 
 """

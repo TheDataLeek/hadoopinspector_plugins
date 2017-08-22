@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os, sys, time
 import datetime
@@ -48,10 +48,10 @@ class Test_valid_iso8601_ext(object):
 
 class Test_get_next_dt(object):
     def test_basics(self):
-        last_start_dt = datetime.datetime(2015, 01, 02, 0, 0, 0)
-        last_stop_dt = datetime.datetime(2015, 01, 02, 23, 59, 59)
+        last_start_dt = datetime.datetime(2015, 1, 2, 0, 0, 0)
+        last_stop_dt = datetime.datetime(2015, 1, 2, 23, 59, 59)
         assert mod.get_next_dt(last_start_dt, last_stop_dt)  \
-                == (datetime.datetime(2015, 01, 03, 0, 0, 0), datetime.datetime(2015, 1, 3, 23, 59, 59))
+                == (datetime.datetime(2015, 1, 3, 0, 0, 0), datetime.datetime(2015, 1, 3, 23, 59, 59))
     def test_input_is_none(self):
         last_dt = None
         assert mod.get_next_dt(None, None)  == (None, None)
@@ -153,11 +153,11 @@ class Test_get_ymd_filter(object):
 
 class Test_part_to_dt(object):
     def test_basics(self):
-        assert mod.part_to_dt(2015, 01, 02)  == datetime.datetime(2015, 01, 02)
+        assert mod.part_to_dt(2015, 1, 2)  == datetime.datetime(2015, 1, 2)
 
 class Test_dt_to_part(object):
     def test_basics(self):
-        last_dt = datetime.datetime(2015, 01, 02)
+        last_dt = datetime.datetime(2015, 1, 2)
         assert mod.dt_to_parts(last_dt) == (2015, 1, 2)
     def test_input_is_none(self):
         assert mod.dt_to_parts(None) == (None, None, None)

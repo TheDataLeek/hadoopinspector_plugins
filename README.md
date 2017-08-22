@@ -18,7 +18,7 @@ More info is on the [wiki](https://github.com/willzfarmer/HadoopInspector/wiki)
 
 ##Installation
 
-* requires python 2.7
+* requires python 3.6
 * clone to local machine
 * symlink or build to your check_dir
 

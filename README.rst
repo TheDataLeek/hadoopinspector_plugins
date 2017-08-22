@@ -2,7 +2,7 @@ Hadoop\_Inspector\_Plugins
 ==========================
 
 To review our complete set of documentation please see our `wiki
-page <https://github.com/willzfarmer/HadoopInspector/wiki>`_
+page <https://github.com/willzfarmer/HadoopInspector/wiki>`__
 
 Background
 ----------
@@ -17,12 +17,12 @@ Current Status
 TBD
 
 More info is on the
-`wiki <https://github.com/willzfarmer/HadoopInspector/wiki>`_
+`wiki <https://github.com/willzfarmer/HadoopInspector/wiki>`__
 
 Installation
 ------------
 
--  requires python 2.7
+-  requires python 3.6
 -  clone to local machine
 -  symlink or build to your check\_dir
 
